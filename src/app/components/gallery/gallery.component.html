@@ -1,0 +1,62 @@
+<div class="p-6 max-w-4xl mx-auto">
+    <div class="mb-6">
+      <label for="category" class="block text-lg font-semibold text-gray-700 mb-2">Filtrar por categoría:</label>
+      <select id="category" (change)="filterImages($event)" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+      </select>
+    </div>
+  
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+      <ng-container *ngIf="filteredImages.length > 0; else noImages">
+        <div *ngFor="let image of filteredImages" class="relative bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+          <img [src]="image.urls.small" alt="{{ image.alt_description }}" class="w-full h-48 object-cover cursor-pointer" (click)="showDetails(image)">
+          <div class="p-4">
+            <h3 class="text-lg font-semibold truncate">{{ image.alt_description || 'Imagen' }}</h3>
+            <p class="text-sm text-gray-500">Por: {{ image.user.name }}</p>
+            <button (click)="toggleFavorite(image)" class="mt-2 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              {{ image.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
+            </button>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #noImages>
+        <p class="col-span-full text-center text-gray-500">No hay imágenes disponibles en esta categoría.</p>
+      </ng-template>
+    </div>
+  
+    <div *ngIf="selectedImage" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+        <h2 class="text-2xl font-semibold mb-4">{{ selectedImage.alt_description || 'Imagen' }}</h2>
+        <img [src]="selectedImage.urls.regular" alt="{{ selectedImage.alt_description }}" class="w-full h-auto mb-4">
+        <p class="text-sm text-gray-600">Por: {{ selectedImage.user.name }}</p>
+        <p class="text-sm text-gray-600">Fecha: {{ selectedImage.created_at | date:'longDate' }}</p>
+        <p class="text-gray-800">{{ selectedImage.description || 'Sin descripción disponible' }}</p>
+        <button (click)="closeDetails()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  
+    <section class="mt-12 border-t border-gray-300 pt-6">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">Imágenes Favoritas</h2>
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <div *ngIf="favorites.length > 0; else noFavorites" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div *ngFor="let favorite of favorites" class="relative bg-gray-100 border border-gray-200 rounded-lg overflow-hidden transition-transform transform hover:scale-105">
+            <img [src]="favorite.urls.thumb" alt="{{ favorite.alt_description }}" class="w-full h-32 object-cover">
+            <div class="p-4">
+              <h3 class="text-lg font-semibold truncate text-gray-800">{{ favorite.alt_description || 'Imagen' }}</h3>
+              <button (click)="removeFavorite(favorite)" class="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <ng-template #noFavorites>
+          <p class="text-center text-gray-500">No tienes imágenes favoritas aún.</p>
+        </ng-template>
+      </div>
+    </section>
+  </div>
+  
